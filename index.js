@@ -24,30 +24,39 @@ const infoSchema = {
 
 const Info = mongoose.model("Info", infoSchema);
 
-app.get("/get", function (req, res) {
-  Info.find(function (err, result) {
-    if (!err) {
-      console.log(result[1]);
-      console.log(result);
-    }
+app._router
+  .route("/articles")
+  .get(function (req, res) {
+    Info.find(function (err, result) {
+      if (!err) {
+        res.send(result);
+      }
+    });
+  })
+  .post(function (req, res) {
+    console.log(req.body.title);
+    console.log(req.body.content);
+    const newInfo = new Info({
+      title: req.body.title,
+      content: req.body.content,
+    });
+    newInfo.save(function (err) {
+      if (!err) {
+        res.send("Article saved successfully");
+      } else {
+        res.send(err);
+      }
+    });
+  })
+  .delete(function (req, res) {
+    Info.deleteMany(function (err) {
+      if (!err) {
+        res.send("Articles Deleted");
+      } else {
+        res.send(err);
+      }
+    });
   });
-});
-
-app.post("/articles", function (req, res) {
-  console.log(req.body.title);
-  console.log(req.body.content);
-  const newInfo = new Info({
-    title: req.body.title,
-    content: req.body.content,
-  });
-  newInfo.save(function (err) {
-    if (!err) {
-      res.send("Article saved successfully");
-    } else {
-      res.send(err);
-    }
-  });
-});
 app.listen(3000, function () {
   console.log("Server started on port 3000");
 });
