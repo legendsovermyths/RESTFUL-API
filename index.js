@@ -33,6 +33,7 @@ app._router
       }
     });
   })
+
   .post(function (req, res) {
     console.log(req.body.title);
     console.log(req.body.content);
@@ -48,6 +49,7 @@ app._router
       }
     });
   })
+
   .delete(function (req, res) {
     Info.deleteMany(function (err) {
       if (!err) {
@@ -57,6 +59,17 @@ app._router
       }
     });
   });
+
+app.route("/articles/:articleTitle").get(function (req, res) {
+  Info.findOne({ title: req.params.articleTitle }, function (err, results) {
+    if (!err) {
+      res.send(results);
+    } else {
+      res.send(err);
+    }
+  });
+});
+
 app.listen(3000, function () {
   console.log("Server started on port 3000");
 });
