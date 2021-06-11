@@ -60,15 +60,58 @@ app._router
     });
   });
 
-app.route("/articles/:articleTitle").get(function (req, res) {
-  Info.findOne({ title: req.params.articleTitle }, function (err, results) {
-    if (!err) {
-      res.send(results);
-    } else {
-      res.send(err);
-    }
+app
+  .route("/articles/:articleTitle")
+  .get(function (req, res) {
+    Info.findOne({ title: req.params.articleTitle }, function (err, results) {
+      if (!err) {
+        res.send(results);
+      } else {
+        res.send(err);
+      }
+    });
+  })
+  .put(function (req, res) {
+    Info.update(
+      { title: req.params.articleTitle },
+      {
+        title: req.body.title,
+        content: req.body.content,
+      },
+      {
+        overwrite: true,
+      },
+      function (err) {
+        if (!err) {
+          console.log("Info overwritten");
+        } else {
+          console.log(err);
+        }
+      }
+    );
+  })
+  .patch(function (req, res) {
+    Info.update(
+      { title: req.params.articleTitle },
+      {
+        $set: req.body,
+      },
+      function (err) {
+        if (!err) {
+          res.send("File added succesfully");
+        }
+      }
+    );
+  })
+  .delete(function (req, res) {
+    Info.deleteOne({ title: req.params.articleTitle }, function (err) {
+      if (!err) {
+        res.send("Info deleted");
+      } else {
+        console.log(err);
+      }
+    });
   });
-});
 
 app.listen(3000, function () {
   console.log("Server started on port 3000");
